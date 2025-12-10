@@ -11008,8 +11008,8 @@ Get the films released in 2020 or later.
 <span class="s2">SELECT title, release_date</span>
 <span class="s2">FROM film</span>
 <span class="s2">WHERE release_date &gt;= '2020-01-01'</span>
-<span class="s2">LIMIT 10;</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="s2">LIMIT 10</span>
+<span class="s2">;"""</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -11127,8 +11127,8 @@ Get the films with vote_average below 6 but that still have been nominated for O
 <span class="s2">SELECT DISTINCT f.title, f.vote_average, n.is_winner</span>
 <span class="s2">FROM film f</span>
 <span class="s2">JOIN nomination n USING(film_id)</span>
-<span class="s2">WHERE vote_average &lt; 6 AND vote_count &gt; 1000;</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="s2">WHERE vote_average &lt; 6 AND vote_count &gt; 1000</span>
+<span class="s2">;"""</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -11311,8 +11311,8 @@ Average budget of nominated films with Brad Pitt.
 <span class="s2">)</span>
 <span class="s2">SELECT AVG(f.budget)</span>
 <span class="s2">FROM film f</span>
-<span class="s2">JOIN brad_movie USING(film_id);</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="s2">JOIN brad_movie USING(film_id)</span>
+<span class="s2">;"""</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -11380,16 +11380,14 @@ Find the film that won an Oscar with the lowest budget.
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">run_query</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">    SELECT f.title, f.budget</span>
-<span class="s2">    FROM film f</span>
-<span class="s2">    JOIN nomination n ON f.film_id = n.film_id</span>
-<span class="s2">    JOIN award a ON n.award_id = a.award_id</span>
-<span class="s2">    WHERE n.is_winner AND f.budget != 'NaN'</span>
-<span class="s2">    ORDER BY  f.budget ASC</span>
-<span class="s2">    LIMIT 1;</span>
-<span class="s2">;</span>
-<span class="s2">"""</span>
-<span class="p">)</span>
+<span class="s2">SELECT f.title, f.budget</span>
+<span class="s2">FROM film f</span>
+<span class="s2">JOIN nomination n ON f.film_id = n.film_id</span>
+<span class="s2">JOIN award a ON n.award_id = a.award_id</span>
+<span class="s2">WHERE n.is_winner AND f.budget != 'NaN'</span>
+<span class="s2">ORDER BY  f.budget ASC</span>
+<span class="s2">LIMIT 1</span>
+<span class="s2">;"""</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -11459,14 +11457,18 @@ Get top 10 movies (we add vote_count constraint for relevance).
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">run_query</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">with film_win as ( select film_id, count(*) as nb_win</span>
-<span class="s2">from nomination where is_winner=true group by film_id)</span>
+<span class="s2">WITH film_win AS (</span>
+<span class="s2">    SELECT film_id, count(*) AS nb_win</span>
+<span class="s2">    FROM nomination</span>
+<span class="s2">    WHERE is_winner</span>
+<span class="s2">    GROUP BY film_id</span>
+<span class="s2">)</span>
 <span class="s2">SELECT title, vote_average, nb_win</span>
 <span class="s2">FROM film F JOIN film_win fw USING (film_id)</span>
 <span class="s2">WHERE vote_average IS NOT NULL AND vote_count &gt; 10000</span>
 <span class="s2">ORDER BY vote_average DESC</span>
-<span class="s2">LIMIT 10;</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="s2">LIMIT 10</span>
+<span class="s2">;"""</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -11602,8 +11604,8 @@ Find the average vote for person who worked/acted in more than 10 movies.
 <span class="s2">GROUP BY p.name</span>
 <span class="s2">HAVING COUNT(DISTINCT f.film_id) &gt; 10</span>
 <span class="s2">ORDER BY average_film_rating DESC</span>
-<span class="s2">LIMIT 10; </span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="s2">LIMIT 10</span>
+<span class="s2">;"""</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -11717,15 +11719,15 @@ Find the director who won the highest number of Oscars</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">run_query</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">SELECT p.name AS Director_Name,COUNT(n.nom_id) AS nb_best_director</span>
+<span class="s2">SELECT p.name AS Director_Name, COUNT(n.nom_id) AS nb_best_director</span>
 <span class="s2">FROM Person p</span>
 <span class="s2">JOIN Nomination_Person np ON p.person_id = np.person_id</span>
 <span class="s2">JOIN Nomination n ON np.nomination_id = n.nom_id</span>
 <span class="s2">JOIN Award a ON n.award_id = a.award_id</span>
-<span class="s2">WHERE n.is_winner = TRUE AND a.award_name LIKE 'Directing'</span>
+<span class="s2">WHERE n.is_winner AND a.award_name LIKE 'Directing'</span>
 <span class="s2">GROUP BY p.name ORDER BY nb_best_director DESC </span>
-<span class="s2">LIMIT 1;</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="s2">LIMIT 1</span>
+<span class="s2">;"""</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
